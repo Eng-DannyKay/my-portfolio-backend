@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const data_source_1 = require("./src/config/data-source");
-const contact_routes_1 = __importDefault(require("./src/routes/contact.routes"));
+const data_source_1 = require("./config/data-source");
+const contact_routes_1 = __importDefault(require("./routes/contact.routes"));
 const app = (0, express_1.default)();
 const port = 3000;
 data_source_1.DB_Connection;
