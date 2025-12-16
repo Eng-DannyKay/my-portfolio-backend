@@ -24,4 +24,7 @@ export class ContactEntity{
     @IsNotEmpty({ message: "Message is required" })
     @IsString({ message: "Message must be a string" })
     message!: string;
+
+    @Column()
+    createdAt!: Date;
 }
