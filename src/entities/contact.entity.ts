@@ -27,4 +27,7 @@ export class ContactEntity{
 
     @Column()
     createdAt!: Date;
+
+    @Column()
+    updatedAt!: Date;
 }
