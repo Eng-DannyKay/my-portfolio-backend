@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { logger } from "../utils/logger";
 import { env } from './env';
+import { ContactEntity } from "../entities/contact.entity";
 
 export const DB_Connection = new DataSource({
   type: "postgres",
@@ -10,7 +11,8 @@ export const DB_Connection = new DataSource({
   password: env.db.password,
   database: env.db.name,
   synchronize: true,
-  entities: [__dirname + "/../src/entities/**/*.ts"],
+   ssl: false,
+  entities: [ContactEntity],
 });
 
 DB_Connection.initialize()
