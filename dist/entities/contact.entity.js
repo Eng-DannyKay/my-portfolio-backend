@@ -42,14 +42,6 @@ __decorate([
     (0, class_validator_1.IsString)({ message: "Message must be a string" }),
     __metadata("design:type", String)
 ], ContactEntity.prototype, "message", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Date)
-], ContactEntity.prototype, "createdAt", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Date)
-], ContactEntity.prototype, "updatedAt", void 0);
 exports.ContactEntity = ContactEntity = __decorate([
     (0, typeorm_1.Entity)()
 ], ContactEntity);

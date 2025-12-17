@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
-    "target": "ES2019",
+
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "moduleResolution": "node",
     "strict": true,
