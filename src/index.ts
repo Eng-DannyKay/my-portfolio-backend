@@ -1,7 +1,5 @@
-import { Request, Response } from "express";
-import express from "express";
 import cors from "cors";
-import { httpLogger } from "./middlewares/http-logger.middleware";
+import express from "express";
 import { DB_Connection } from "./config/data-source";
 import contactRoutes from "./routes/contact.routes";
 const app = express();
