@@ -115,7 +115,7 @@ http://localhost:3000/api/v1
 - **Description**: Check if the server is running
 - **Response**: `200 OK`
   ```
-  Hello Work for me!
+  Hello World!
   ```
 
 ## 🏗️ Project Structure
