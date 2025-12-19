@@ -9,7 +9,10 @@ DB_Connection;
 // app.use(httpLogger);
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "https://danielforson-portfolio.netlify.app/",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
