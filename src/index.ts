@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import cors from "cors";
 import express from "express";
 import { DB_Connection } from "./config/data-source";
@@ -20,11 +21,11 @@ app.use(
 
 app.use(express.json());
 
-app.use("/api/v1", contactRoutes);
-
 app.get('/', (req, res) => {
-  res.send('Server is running')
+  res.json({ message: 'Server is running' });
 });
+
+app.use("/api/v1", contactRoutes);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
@@ -33,14 +34,14 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 const startServer = async () => {
   try {
-    await DB_Connection.initialize();
+    await DB_Connection;
     console.log('Database connected successfully');
     
     app.listen(port, () => {
       console.log(`Server listening on port ${port}`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('Failed to connect to database:', error);
     process.exit(1);
   }
 };
