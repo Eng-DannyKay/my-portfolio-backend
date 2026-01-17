@@ -1,4 +1,3 @@
-// server.ts
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -17,7 +16,6 @@ const allowedOrigins = new Set([
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-  
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.has(origin)) {
@@ -31,9 +29,7 @@ const corsOptions: cors.CorsOptions = {
   maxAge: 86400,
 };
 
-
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
@@ -43,7 +39,6 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/v1", router);
 
-// centralized error handler
 const errorHandler: ErrorRequestHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error("Error:", err);
 
