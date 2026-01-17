@@ -24,7 +24,7 @@ app.use(express.json());
 app.use("/api/v1", contactRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Hello Work for me!')
+  res.send('Hello World!')
 })
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
