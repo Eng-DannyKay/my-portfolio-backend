@@ -39,56 +39,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-var cors_1 = __importDefault(require("cors"));
-var express_1 = __importDefault(require("express"));
-var mongo_db_1 = __importDefault(require("./config/mongo_db"));
-var contact_routes_1 = __importDefault(require("./routes/contact.routes"));
-var app = (0, express_1.default)();
-var port = process.env.PORT || 3000;
-app.use((0, cors_1.default)({
-    origin: [
-        "http://localhost:5173",
-        "https://danielforson-portfolio.netlify.app"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-}));
-app.use(express_1.default.json());
-app.get('/', function (req, res) {
-    res.json({ message: 'Server is running', status: 'ok' });
-});
-app.use("/api/v1", contact_routes_1.default);
-app.use(function (err, req, res, next) {
-    console.error('Error:', err);
-    res.status(500).json({
-        message: 'Internal Server Error',
-        error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message
-    });
-});
-var startServer = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
+exports.connectDB = void 0;
+var mongoose_1 = __importDefault(require("mongoose"));
+var connectDB = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var mongoUri, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, mongo_db_1.default)()];
+                mongoUri = process.env.MONGODB_URI;
+                if (!mongoUri) {
+                    throw new Error('MONGODB_URI not defined');
+                }
+                return [4 /*yield*/, mongoose_1.default.connect(mongoUri)];
             case 1:
                 _a.sent();
-                app.listen(port, function () {
-                    console.log("\uD83D\uDE80 Server is running on port ".concat(port));
+                console.log('✅ MongoDB connected');
+                mongoose_1.default.connection.on('error', function (err) {
+                    console.error('MongoDB error:', err);
                 });
+                mongoose_1.default.connection.on('disconnected', function () {
+                    console.log('MongoDB disconnected');
+                });
+                process.on('SIGINT', function () { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, mongoose_1.default.connection.close()];
+                            case 1:
+                                _a.sent();
+                                process.exit(0);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
                 return [3 /*break*/, 3];
             case 2:
                 error_1 = _a.sent();
-                console.error('Failed to start server:', error_1);
+                console.error('❌ MongoDB connection failed:', error_1);
                 process.exit(1);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
-startServer();
-//# sourceMappingURL=index.js.map
+exports.connectDB = connectDB;
+exports.default = exports.connectDB;
+//# sourceMappingURL=mongo_db.js.map

@@ -3,7 +3,6 @@ dotenv.config();
 
 import cors from "cors";
 import express from "express";
-import "reflect-metadata";
 import connectDB from "./config/mongo_db";
 import router from "./routes/contact.routes";
 

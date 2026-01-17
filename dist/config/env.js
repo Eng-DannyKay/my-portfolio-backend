@@ -5,11 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.env = void 0;
-const dotenv_1 = __importDefault(require("dotenv"));
+var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const required = (value, name) => {
+var required = function (value, name) {
     if (!value) {
-        throw new Error(`Missing environment variable: ${name}`);
+        throw new Error("Missing environment variable: ".concat(name));
     }
     return value;
 };
