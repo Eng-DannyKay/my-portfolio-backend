@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.httpLogger = void 0;
-const pino_http_1 = __importDefault(require("pino-http"));
-const logger_1 = require("../utils/logger");
+var pino_http_1 = __importDefault(require("pino-http"));
+var logger_1 = require("../utils/logger");
 exports.httpLogger = (0, pino_http_1.default)({
     logger: logger_1.logger,
 });
