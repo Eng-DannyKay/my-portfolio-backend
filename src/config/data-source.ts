@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
-import { logger } from "../utils/logger";
-import { env } from './env';
 import { ContactEntity } from "../entities/contact.entity";
+import { env } from './env';
 
 export const DB_Connection = new DataSource({
   type: "postgres",
@@ -15,10 +14,10 @@ export const DB_Connection = new DataSource({
   entities: [ContactEntity],
 });
 
-DB_Connection.initialize()
-  .then(() => {
-    logger.info("Data Source has been initialized!");
-  })
-  .catch((error) => {
-    logger.info("Error during Data Source initialization:", error);
-  });
+// DB_Connection.initialize()
+//   .then(() => {
+//     logger.info("Data Source has been initialized!");
+//   })
+//   .catch((error) => {
+//     logger.info("Error during Data Source initialization:", error);
+//   });
