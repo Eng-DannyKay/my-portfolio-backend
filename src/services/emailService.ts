@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,22 +16,24 @@ interface EmailResponse {
 }
 
 export class EmailService {
-  private static readonly FROM_EMAIL =
-    process.env.FROM_EMAIL || "onboarding@resend.dev";
-  private static readonly TO_EMAIL =
-    process.env.TO_EMAIL || "danielkojoforson27@gmail.com";
+  private static readonly FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+  private static readonly TO_EMAIL = process.env.TO_EMAIL || 'delivered@resend.dev';
   private static readonly REPLY_TO_EMAIL = process.env.REPLY_TO_EMAIL;
 
-  static async sendContactNotification(
-    data: ContactEmailData,
-  ): Promise<EmailResponse> {
+  static async sendContactNotification(data: ContactEmailData): Promise<EmailResponse> {
     try {
-      const { email, subject } = data;
+      if (!process.env.RESEND_API_KEY) {
+        throw new Error('RESEND_API_KEY is not configured');
+      }
+
+      const { name, email, subject, message } = data;
 
       const htmlContent = this.generateContactEmailHTML(data);
       const textContent = this.generateContactEmailText(data);
 
-      const emailData = await resend.emails.send({
+      console.log('Sending notification email to:', this.TO_EMAIL);
+
+      const response = await resend.emails.send({
         from: this.FROM_EMAIL,
         to: this.TO_EMAIL,
         replyTo: email,
@@ -40,53 +42,63 @@ export class EmailService {
         text: textContent,
       });
 
+      console.log('Notification email sent:', response);
+
       return {
         success: true,
-        messageId: emailData.data?.id,
+        messageId: response.data?.id,
       };
     } catch (error: any) {
-      console.error("Email sending failed:", error);
+      console.error('Email sending failed:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return {
         success: false,
-        error: error.message || "Failed to send email",
+        error: error.message || 'Failed to send email',
       };
     }
   }
 
-  static async sendConfirmationEmail(
-    data: ContactEmailData,
-  ): Promise<EmailResponse> {
+  static async sendConfirmationEmail(data: ContactEmailData): Promise<EmailResponse> {
     try {
+      if (!process.env.RESEND_API_KEY) {
+        throw new Error('RESEND_API_KEY is not configured');
+      }
+
       const { name, email, subject } = data;
 
       const htmlContent = this.generateConfirmationEmailHTML(name, subject);
       const textContent = this.generateConfirmationEmailText(name, subject);
 
-      const emailData = await resend.emails.send({
+      console.log('Sending confirmation email to:', email);
+
+      const response = await resend.emails.send({
         from: this.FROM_EMAIL,
         to: email,
         replyTo: this.REPLY_TO_EMAIL || this.TO_EMAIL,
-        subject: "Thank you for contacting me!",
+        subject: 'Thank you for contacting me!',
         html: htmlContent,
         text: textContent,
       });
 
+      console.log('Confirmation email sent:', response);
+
       return {
         success: true,
-        messageId: emailData.data?.id,
+        messageId: response.data?.id,
       };
     } catch (error: any) {
-      console.error("Confirmation email failed:", error);
+      console.error('Confirmation email failed:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return {
         success: false,
-        error: error.message || "Failed to send confirmation email",
+        error: error.message || 'Failed to send confirmation email',
       };
     }
   }
 
   private static generateContactEmailHTML(data: ContactEmailData): string {
     const { name, email, subject, message } = data;
-
+    
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -162,7 +174,7 @@ export class EmailService {
 
   private static generateContactEmailText(data: ContactEmailData): string {
     const { name, email, subject, message } = data;
-
+    
     return `
 New Contact Message
 
@@ -178,10 +190,7 @@ This email was sent from your portfolio contact form
     `.trim();
   }
 
-  private static generateConfirmationEmailHTML(
-    name: string,
-    subject: string,
-  ): string {
+  private static generateConfirmationEmailHTML(name: string, subject: string): string {
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -241,10 +250,7 @@ This email was sent from your portfolio contact form
     `;
   }
 
-  private static generateConfirmationEmailText(
-    name: string,
-    subject: string,
-  ): string {
+  private static generateConfirmationEmailText(name: string, subject: string): string {
     return `
 Hi ${name},
 
