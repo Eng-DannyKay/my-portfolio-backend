@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import { Contact } from '../model/contact.model';
 
-
 export class ContactController {
-  static async createContact(req: Request, res: Response) {
+  static async createContact(req: Request, res: Response): Promise<void> {
     try {
       const { name, email, subject, message } = req.body;
 
@@ -28,6 +27,7 @@ export class ContactController {
         message: "Your message sent successfully",
         data: newContact
       });
+      return;
     } catch (error: any) {
       console.error('Error creating contact:', error);
       
@@ -43,10 +43,11 @@ export class ContactController {
         message: "Failed to send message",
         error: process.env.NODE_ENV === 'production' ? 'Server error' : error.message
       });
+      return;
     }
   }
 
-  static async getAllContacts(req: Request, res: Response) {
+  static async getAllContacts(req: Request, res: Response): Promise<void> {
     try {
       const contacts = await Contact.find().sort({ createdAt: -1 });
       
@@ -55,16 +56,18 @@ export class ContactController {
         count: contacts.length,
         data: contacts
       });
+      return;
     } catch (error: any) {
       console.error('Error getting contacts:', error);
       res.status(500).json({ 
         message: "Failed to get contacts",
         error: process.env.NODE_ENV === 'production' ? 'Server error' : error.message
       });
+      return;
     }
   }
 
-  static async deleteContact(req: Request, res: Response) {
+  static async deleteContact(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
 
@@ -84,12 +87,14 @@ export class ContactController {
         message: "Contact deleted successfully",
         data: deletedContact
       });
+      return;
     } catch (error: any) {
       console.error('Error deleting contact:', error);
       res.status(500).json({ 
         message: "Failed to delete contact",
         error: process.env.NODE_ENV === 'production' ? 'Server error' : error.message
       });
+      return;
     }
   }
 }
