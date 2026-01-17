@@ -14,6 +14,21 @@ const allowedOrigins = new Set([
   "https://danielforson.onrender.com",
 ]);
 
+app.options("*", cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); 
+    if (allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+  maxAge: 86400,
+}));
+
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -24,10 +39,10 @@ app.use(
       callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   }),
 );
-
-app.options("*", cors());
 
 app.use(express.json());
 
