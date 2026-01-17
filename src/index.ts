@@ -12,16 +12,16 @@ import router from "./routes/contact.routes";
 const app = express();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = [
+const allowedOrigins = new Set([
   "http://localhost:5173",
   "https://danielforson.onrender.com",
-];
+]);
 
 app.use(helmet());
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.has(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));

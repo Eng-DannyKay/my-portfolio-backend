@@ -1,5 +1,12 @@
 import { Request, Response } from 'express';
 import { Contact } from '../model/contact.model';
+import { EmailService } from '../services/emailService';
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const sanitizeInput = (input: string): string => {
+  return input.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+};
 
 export class ContactController {
   static async createContact(req: Request, res: Response): Promise<void> {
@@ -8,24 +15,67 @@ export class ContactController {
 
       if (!name || !email || !subject || !message) {
         res.status(400).json({ 
-          message: "All fields are required",
-          fields: { name, email, subject, message }
+          message: "All fields are required"
         });
         return;
       }
 
+      if (name.length > 100 || subject.length > 200 || message.length > 2000) {
+        res.status(400).json({ 
+          message: "Input exceeds maximum length"
+        });
+        return;
+      }
+
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ 
+          message: "Invalid email format"
+        });
+        return;
+      }
+
+      const sanitizedName = sanitizeInput(name);
+      const sanitizedSubject = sanitizeInput(subject);
+      const sanitizedMessage = sanitizeInput(message);
+      const sanitizedEmail = email.toLowerCase().trim();
+
       const newContact = new Contact({
-        name,
-        email,
-        subject,
-        message
+        name: sanitizedName,
+        email: sanitizedEmail,
+        subject: sanitizedSubject,
+        message: sanitizedMessage
       });
 
       await newContact.save();
 
+      const emailData = {
+        name: sanitizedName,
+        email: sanitizedEmail,
+        subject: sanitizedSubject,
+        message: sanitizedMessage
+      };
+
+      const [notificationResult, confirmationResult] = await Promise.allSettled([
+        EmailService.sendContactNotification(emailData),
+        EmailService.sendConfirmationEmail(emailData)
+      ]);
+
+      if (notificationResult.status === 'rejected') {
+        console.error('Failed to send notification email:', notificationResult.reason);
+      }
+
+      if (confirmationResult.status === 'rejected') {
+        console.error('Failed to send confirmation email:', confirmationResult.reason);
+      }
+
       res.status(201).json({
         message: "Your message sent successfully",
-        data: newContact
+        data: {
+          id: newContact._id,
+          name: newContact.name,
+          subject: newContact.subject,
+          createdAt: newContact.createdAt
+        }
       });
       return;
     } catch (error: any) {
@@ -49,6 +99,13 @@ export class ContactController {
 
   static async getAllContacts(req: Request, res: Response): Promise<void> {
     try {
+      const apiKey = req.headers['x-api-key'];
+      
+      if (apiKey !== process.env.ADMIN_API_KEY) {
+        res.status(403).json({ message: "Unauthorized access" });
+        return;
+      }
+
       const contacts = await Contact.find().sort({ createdAt: -1 });
       
       res.status(200).json({
@@ -69,6 +126,13 @@ export class ContactController {
 
   static async deleteContact(req: Request, res: Response): Promise<void> {
     try {
+      const apiKey = req.headers['x-api-key'];
+      
+      if (apiKey !== process.env.ADMIN_API_KEY) {
+        res.status(403).json({ message: "Unauthorized access" });
+        return;
+      }
+
       const { id } = req.params;
 
       if (!id) {
