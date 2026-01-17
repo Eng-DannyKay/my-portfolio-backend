@@ -9,27 +9,26 @@ import router from "./routes/contact.routes";
 const app = express();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = new Set([
+const allowedOrigins = [
   "http://localhost:5173",
   "https://danielforson.onrender.com",
-]);
+];
 
-const corsOptions: cors.CorsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.has(origin)) {
-      return callback(null, true);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
     }
-    return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-  maxAge: 86400,
-};
-
-app.use(cors(corsOptions));
+  exposedHeaders: ["Content-Type"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
 app.use(express.json());
 
