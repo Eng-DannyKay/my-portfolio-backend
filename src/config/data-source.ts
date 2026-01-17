@@ -10,14 +10,6 @@ export const DB_Connection = new DataSource({
   password: env.db.password,
   database: env.db.name,
   synchronize: true,
-   ssl: false,
+   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
   entities: [ContactEntity],
-});
-
-// DB_Connection.initialize()
-//   .then(() => {
-//     logger.info("Data Source has been initialized!");
-//   })
-//   .catch((error) => {
-//     logger.info("Error during Data Source initialization:", error);
-//   });
+}).initialize();
