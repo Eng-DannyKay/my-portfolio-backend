@@ -69,7 +69,7 @@ var ContactController = /** @class */ (function () {
                             message: "Your message sent successfully",
                             data: newContact
                         });
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/];
                     case 2:
                         error_1 = _b.sent();
                         console.error('Error creating contact:', error_1);
@@ -84,7 +84,7 @@ var ContactController = /** @class */ (function () {
                             message: "Failed to send message",
                             error: process.env.NODE_ENV === 'production' ? 'Server error' : error_1.message
                         });
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -105,7 +105,7 @@ var ContactController = /** @class */ (function () {
                             count: contacts.length,
                             data: contacts
                         });
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/];
                     case 2:
                         error_2 = _a.sent();
                         console.error('Error getting contacts:', error_2);
@@ -113,7 +113,7 @@ var ContactController = /** @class */ (function () {
                             message: "Failed to get contacts",
                             error: process.env.NODE_ENV === 'production' ? 'Server error' : error_2.message
                         });
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -142,7 +142,7 @@ var ContactController = /** @class */ (function () {
                             message: "Contact deleted successfully",
                             data: deletedContact
                         });
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/];
                     case 2:
                         error_3 = _a.sent();
                         console.error('Error deleting contact:', error_3);
@@ -150,7 +150,7 @@ var ContactController = /** @class */ (function () {
                             message: "Failed to delete contact",
                             error: process.env.NODE_ENV === 'production' ? 'Server error' : error_3.message
                         });
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/];
                     case 3: return [2 /*return*/];
                 }
             });

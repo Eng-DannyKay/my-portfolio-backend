@@ -41,33 +41,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-var cors_1 = __importDefault(require("cors"));
 var express_1 = __importDefault(require("express"));
 var mongo_db_1 = __importDefault(require("./config/mongo_db"));
 var contact_routes_1 = __importDefault(require("./routes/contact.routes"));
 var app = (0, express_1.default)();
 var port = process.env.PORT || 3000;
-app.use((0, cors_1.default)({
-    origin: [
-        "http://localhost:5173",
-        "https://danielforson-portfolio.netlify.app"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-}));
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
 app.use(express_1.default.json());
-app.get('/', function (req, res) {
-    res.json({ message: 'Server is running', status: 'ok' });
+app.use(express_1.default.urlencoded({ extended: true }));
+app.get("/", function (req, res) {
+    res.json({ message: "Server is running", status: "ok" });
 });
 app.use("/api/v1", contact_routes_1.default);
-app.use(function (err, req, res, next) {
-    console.error('Error:', err);
+var errorHandler = function (err, req, res, next) {
+    console.error("Error:", err);
     res.status(500).json({
-        message: 'Internal Server Error',
-        error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message
+        message: "Internal Server Error",
+        error: process.env.NODE_ENV === "production" ? "Something went wrong" : err.message,
     });
-});
+};
+app.use(errorHandler);
 var startServer = function () { return __awaiter(void 0, void 0, void 0, function () {
     var error_1;
     return __generator(this, function (_a) {
@@ -83,7 +85,7 @@ var startServer = function () { return __awaiter(void 0, void 0, void 0, functio
                 return [3 /*break*/, 3];
             case 2:
                 error_1 = _a.sent();
-                console.error('Failed to start server:', error_1);
+                console.error("Failed to start server:", error_1);
                 process.exit(1);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
