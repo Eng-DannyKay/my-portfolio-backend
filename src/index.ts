@@ -1,8 +1,11 @@
-import "reflect-metadata";
+import dotenv from "dotenv";
+dotenv.config();
+
 import cors from "cors";
 import express from "express";
-import { DB_Connection } from "./config/data-source";
-import contactRoutes from "./routes/contact.routes";
+import "reflect-metadata";
+import connectDB from "./config/mongo_db";
+import router from "./routes/contact.routes";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,26 +25,27 @@ app.use(
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Server is running' });
+  res.json({ message: 'Server is running', status: 'ok' });
 });
 
-app.use("/api/v1", contactRoutes);
+app.use("/api/v1", router);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
-  res.status(500).json({ message: 'Internal Server Error', error: err.message });
+  res.status(500).json({ 
+    message: 'Internal Server Error', 
+    error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message 
+  });
 });
 
 const startServer = async () => {
   try {
-    await DB_Connection;
-    console.log('Database connected successfully');
-    
+    await connectDB();
     app.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
+      console.log(`🚀 Server is running on port ${port}`);
     });
   } catch (error) {
-    console.error('Failed to connect to database:', error);
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 };
